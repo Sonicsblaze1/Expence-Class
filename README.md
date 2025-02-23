@@ -47,10 +47,9 @@ ExpenseDatabase: Manages a collection of expenses, allowing adding, removing, an
 To clone this repository, use the following command:
 
 ```sh
-git clone <repository-url>
+git clone <https://github.com/Sonicsblaze1/Expence-Class.git>
 ```
 
-Replace `<repository-url>` with the actual URL of the GitHub repository.
 
 ## How to Run the Code
 After cloning the repository, navigate into the project directory:
