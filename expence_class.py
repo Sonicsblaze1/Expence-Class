@@ -16,16 +16,16 @@ class Expense:
         self.id = str(uuid.uuid4())  # Generates a unique identifier
         self.title = title  # Stores the title of the expense
         self.amount = amount  # Stores the amount of the expense
-        self.created_at = datetime.utcnow()  # Sets creation timestamp in UTC
-        self.updated_at = self.created_at  # Initializes updated_at with created_at
+        self.time_created = datetime.utcnow()  # Sets creation timestamp in UTC
+        self.time_updated = self.time_created  # Initializes time_updated with time_created
 
     def update(self, title: str = None, amount: float = None):
-        """Updates the title and/or amount of the expense and refreshes updated_at."""
+        """Updates the title and/or amount of the expense and refreshes time_updated."""
         if title:
             self.title = title  # Updates title if provided
         if amount:
             self.amount = amount  # Updates amount if provided
-        self.updated_at = datetime.utcnow()  # Updates modification timestamp
+        self.time_updated = datetime.utcnow()  # Updates modification timestamp
 
     def to_dict(self):
         """Returns a dictionary representation of the expense."""
@@ -33,37 +33,37 @@ class Expense:
             "id": self.id,
             "title": self.title,
             "amount": self.amount,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            "time_created": self.time_created.isoformat(),
+            "time_updated": self.time_updated.isoformat(),
         }
 
 class ExpenseDatabase:
     def __init__(self):
         """Initializes an empty list to store expenses."""
-        self.expenses = []
+        self.expense_list = []
 
     def add_expense(self, expense: Expense):
         """Adds an expense to the database."""
-        self.expenses.append(expense)
+        self.expense_list.append(expense)
 
     def remove_expense(self, expense_id: str):
         """Removes an expense by filtering out the one with the given ID."""
-        self.expenses = [expense for expense in self.expenses if expense.id != expense_id]
+        self.expense_list = [expense for expense in self.expense_list if expense.id != expense_id]
 
     def get_expense_by_id(self, expense_id: str):
         """Finds and returns an expense by its unique ID."""
-        for expense in self.expenses:
+        for expense in self.expense_list:
             if expense.id == expense_id:
                 return expense
         return None
 
     def get_expense_by_title(self, title: str):
         """Returns a list of expenses matching the given title."""
-        return [expense for expense in self.expenses if expense.title.lower() == title.lower()]
+        return [expense for expense in self.expense_list if expense.title.lower() == title.lower()]
 
     def to_dict(self):
         """Returns a list of all expenses as dictionaries."""
-        return [expense.to_dict() for expense in self.expenses]
+        return [expense.to_dict() for expense in self.expense_list]
 
 # Example Usage
 if __name__ == "__main__":
@@ -71,11 +71,33 @@ if __name__ == "__main__":
     
     expense1 = Expense("Groceries", 50.75)
     expense2 = Expense("Transport", 20.00)
+    expense3 = Expense("Electricity Bill", 100.00)
+    expense4 = Expense("Internet Subscription", 45.50)
+    expense5 = Expense("Dining Out", 30.25)
     
     db.add_expense(expense1)
     db.add_expense(expense2)
+    db.add_expense(expense3)
+    db.add_expense(expense4)
+    db.add_expense(expense5)
     
     print("All Expenses:")
+    print(db.to_dict())
+    
+    print("\nRetrieving expense by ID:")
+    retrieved_expense = db.get_expense_by_id(expense3.id)
+    if retrieved_expense:
+        print(retrieved_expense.to_dict())
+    
+    print("\nRetrieving expenses by title (Transport):")
+    print([exp.to_dict() for exp in db.get_expense_by_title("Transport")])
+    
+    print("\nUpdating an expense (Groceries)")
+    expense1.update(amount=55.00)
+    print(expense1.to_dict())
+    
+    print("\nRemoving an expense (Dining Out)")
+    db.remove_expense(expense5.id)
     print(db.to_dict())
 
 """# Expense Tracker
